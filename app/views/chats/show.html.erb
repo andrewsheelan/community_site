@@ -1,0 +1,68 @@
+<div class="min-h-screen bg-amber-50 py-12">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="paper-texture bg-amber-50/90 rounded-lg shadow-lg border border-amber-200/50 p-6 transform rotate-[-0.5deg]">
+      <div class="transform rotate-[0.5deg]">
+        <div class="flex items-center justify-between mb-6">
+          <h1 class="text-2xl font-bold text-amber-900 font-serif">AI Chat Assistant</h1>
+          <%= link_to "Back to Home", root_path, 
+              class: "text-amber-600 hover:text-amber-700 text-sm font-medium transition-colors" %>
+        </div>
+
+        <div class="bg-white/50 rounded-lg border border-amber-200 h-96 overflow-y-auto mb-6 p-4 space-y-4">
+          <% @messages.each do |message| %>
+            <div class="flex <%= message.ai_response? ? 'justify-start' : 'justify-end' %> items-start space-x-2">
+              <% unless message.ai_response? %>
+                <div class="flex-grow"></div>
+              <% end %>
+              
+              <div class="flex items-start space-x-2 max-w-[80%]">
+                <% if message.ai_response? %>
+                  <div class="w-8 h-8 rounded-full bg-amber-200 flex items-center justify-center flex-shrink-0">
+                    <span class="text-amber-800 font-semibold">AI</span>
+                  </div>
+                <% end %>
+                
+                <div class="<%= message.ai_response? ? 'bg-amber-100' : 'bg-amber-600' %> rounded-lg p-3 shadow-sm">
+                  <p class="text-sm <%= message.ai_response? ? 'text-amber-900' : 'text-white' %>">
+                    <%= message.content %>
+                  </p>
+                  <p class="text-xs <%= message.ai_response? ? 'text-amber-600' : 'text-amber-100' %> mt-1">
+                    <%= message.created_at.strftime("%I:%M %p") %>
+                  </p>
+                </div>
+
+                <% unless message.ai_response? %>
+                  <div class="w-8 h-8 rounded-full bg-amber-200 flex items-center justify-center flex-shrink-0">
+                    <span class="text-amber-800 font-semibold"><%= message.user.email[0].upcase %></span>
+                  </div>
+                <% end %>
+              </div>
+
+              <% if message.ai_response? %>
+                <div class="flex-grow"></div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+
+        <%= form_with(model: @message, url: messages_path, local: true, class: "space-y-4") do |f| %>
+          <div class="flex space-x-4">
+            <%= f.text_area :content, 
+                class: "flex-grow px-4 py-2 bg-amber-50/50 border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-sm resize-none",
+                placeholder: "Type your message...",
+                rows: 2 %>
+            
+            <%= f.submit "Send", 
+                class: "px-6 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors shadow-sm" %>
+          </div>
+        <% end %>
+
+        <div class="mt-4 text-center">
+          <p class="text-xs text-amber-600">
+            Powered by AI - Responses are generated instantly
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

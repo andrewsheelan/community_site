@@ -1,0 +1,53 @@
+<div class="min-h-screen bg-amber-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="paper-texture bg-amber-50/90 rounded-lg shadow-lg border border-amber-200/50 p-8 transform rotate-[-0.5deg]">
+      <div class="transform rotate-[0.5deg]">
+        <h1 class="text-4xl font-bold text-amber-900 text-center font-serif mb-8">Welcome to Our Community</h1>
+        
+        <% if user_signed_in? %>
+          <div class="mb-8 text-center">
+            <p class="text-amber-800 mb-4">Welcome back, <span class="font-semibold"><%= current_user.email %></span>!</p>
+            <div class="space-x-4">
+              <%= link_to "Chat with AI", chat_path,
+                  class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors" %>
+              <%= button_to "Sign Out", destroy_user_session_path, method: :delete, 
+                  class: "inline-flex items-center px-4 py-2 border border-amber-600 rounded-md shadow-sm text-sm font-medium text-amber-700 bg-transparent hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors" %>
+            </div>
+          </div>
+        <% else %>
+          <div class="flex justify-center space-x-4 mb-8">
+            <%= link_to "Sign In", new_user_session_path, 
+                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors" %>
+            <%= link_to "Sign Up", new_user_registration_path, 
+                class: "inline-flex items-center px-4 py-2 border border-amber-600 rounded-md shadow-sm text-sm font-medium text-amber-700 bg-transparent hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors" %>
+          </div>
+        <% end %>
+
+        <div class="bg-amber-100/50 rounded-lg p-6 mb-8">
+          <h2 class="text-2xl font-serif font-bold text-amber-900 mb-4">Our Community Members</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <% @users.each do |user| %>
+              <div class="bg-white/50 rounded-lg p-4 shadow-sm border border-amber-200">
+                <div class="flex items-center space-x-3">
+                  <div class="flex-shrink-0">
+                    <div class="w-10 h-10 rounded-full bg-amber-200 flex items-center justify-center">
+                      <span class="text-amber-800 font-semibold"><%= user.email[0].upcase %></span>
+                    </div>
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-amber-900"><%= user.email %></p>
+                    <p class="text-xs text-amber-600">Member since <%= user.created_at.strftime("%B %Y") %></p>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="text-center text-amber-700 text-sm">
+          <p>&copy; <%= Time.current.year %> Our Community. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

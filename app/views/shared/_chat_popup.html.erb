@@ -1,0 +1,78 @@
+<% if user_signed_in? %>
+  <div class="fixed bottom-0 right-4 w-96 z-50" data-controller="chat">
+    <!-- Chat Header -->
+    <button class="paper-texture w-full bg-amber-50/90 px-4 py-3 border border-amber-200/50 rounded-t-lg shadow-lg flex items-center justify-between cursor-pointer"
+            data-action="click->chat#toggle">
+      <div class="flex items-center space-x-2">
+        <div class="w-8 h-8 rounded-full bg-amber-200 flex items-center justify-center">
+          <span class="text-amber-800 font-semibold">AI</span>
+        </div>
+        <span class="font-medium text-amber-900">Chat with AI</span>
+      </div>
+      <svg class="w-5 h-5 text-amber-600 transform transition-transform duration-200"
+           data-chat-target="arrow"
+           xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" />
+      </svg>
+    </button>
+
+    <!-- Chat Content -->
+    <div class="hidden paper-texture bg-amber-50/90 border border-t-0 border-amber-200/50 rounded-b-lg shadow-lg"
+         data-chat-target="content">
+      <div class="h-96 flex flex-col">
+        <!-- Messages Container -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-4" data-chat-target="messages">
+          <% Message.in_order.includes(:user).each do |message| %>
+            <div class="flex <%= message.ai_response? ? 'justify-start' : 'justify-end' %> items-start space-x-2">
+              <% unless message.ai_response? %>
+                <div class="flex-grow"></div>
+              <% end %>
+              
+              <div class="flex items-start space-x-2 max-w-[80%]">
+                <% if message.ai_response? %>
+                  <div class="w-8 h-8 rounded-full bg-amber-200 flex items-center justify-center flex-shrink-0">
+                    <span class="text-amber-800 font-semibold">AI</span>
+                  </div>
+                <% end %>
+                
+                <div class="<%= message.ai_response? ? 'bg-amber-100' : 'bg-amber-600' %> rounded-lg p-3 shadow-sm">
+                  <p class="text-sm <%= message.ai_response? ? 'text-amber-900' : 'text-white' %>">
+                    <%= message.content %>
+                  </p>
+                  <p class="text-xs <%= message.ai_response? ? 'text-amber-600' : 'text-amber-100' %> mt-1">
+                    <%= message.created_at.strftime("%I:%M %p") %>
+                  </p>
+                </div>
+
+                <% unless message.ai_response? %>
+                  <div class="w-8 h-8 rounded-full bg-amber-200 flex items-center justify-center flex-shrink-0">
+                    <span class="text-amber-800 font-semibold"><%= message.user.email[0].upcase %></span>
+                  </div>
+                <% end %>
+              </div>
+
+              <% if message.ai_response? %>
+                <div class="flex-grow"></div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Message Input -->
+        <%= form_with(model: Message.new, url: messages_path, local: true, class: "border-t border-amber-200/50 p-4",
+                    data: { action: "submit->chat#submitMessage" }) do |f| %>
+          <div class="flex space-x-2">
+            <%= f.text_area :content, 
+                class: "flex-grow px-3 py-2 bg-amber-50/50 border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-sm resize-none",
+                placeholder: "Type your message...",
+                rows: 1,
+                data: { chat_target: "input" } %>
+            
+            <%= f.submit "Send", 
+                class: "px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors shadow-sm" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
