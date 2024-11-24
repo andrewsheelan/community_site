@@ -1,6 +1,6 @@
 class EventsController < ApplicationController
-  before_action :authenticate_user!, except: [:index, :show, :calendar]
-  before_action :set_event, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, except: [ :index, :show, :calendar ]
+  before_action :set_event, only: [ :show, :edit, :update, :destroy ]
   load_and_authorize_resource
 
   def index
@@ -11,7 +11,7 @@ class EventsController < ApplicationController
     @events = Event.accessible_by(current_ability)
       .includes(:user)
       .where(
-        'start_time BETWEEN ? AND ?',
+        "start_time BETWEEN ? AND ?",
         @month_start.beginning_of_day,
         @month_end.end_of_day
       ).order(start_time: :asc)
@@ -19,7 +19,7 @@ class EventsController < ApplicationController
     # Get events for selected date if a date is specified
     @date_events = if params[:date]
       @events.where(
-        'start_time BETWEEN ? AND ?',
+        "start_time BETWEEN ? AND ?",
         @selected_date.beginning_of_day,
         @selected_date.end_of_day
       )
@@ -34,7 +34,7 @@ class EventsController < ApplicationController
     @events = Event.accessible_by(current_ability)
       .includes(:user)
       .where(
-        'start_time BETWEEN ? AND ?',
+        "start_time BETWEEN ? AND ?",
         @month_start.beginning_of_day,
         @month_end.end_of_day
       ).order(start_time: :asc)
@@ -64,7 +64,7 @@ class EventsController < ApplicationController
     @event = current_user.events.build(event_params)
 
     if @event.save
-      redirect_to @event, notice: 'Event was successfully created.'
+      redirect_to @event, notice: "Event was successfully created."
     else
       render :new, status: :unprocessable_entity
     end
@@ -75,7 +75,7 @@ class EventsController < ApplicationController
 
   def update
     if @event.update(event_params)
-      redirect_to @event, notice: 'Event was successfully updated.'
+      redirect_to @event, notice: "Event was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -83,7 +83,7 @@ class EventsController < ApplicationController
 
   def destroy
     @event.destroy
-    redirect_to events_url, notice: 'Event was successfully deleted.'
+    redirect_to events_url, notice: "Event was successfully deleted."
   end
 
   private

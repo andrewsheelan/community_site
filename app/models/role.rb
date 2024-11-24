@@ -4,9 +4,9 @@ class Role < ApplicationRecord
   validates :name, presence: true, uniqueness: true
 
   # Define common role names as constants
-  ADMIN = 'admin'
-  MODERATOR = 'moderator'
-  MEMBER = 'member'
+  ADMIN = "admin"
+  MODERATOR = "moderator"
+  MEMBER = "member"
 
   # Scope to find roles by name
   scope :admin, -> { find_by(name: ADMIN) }

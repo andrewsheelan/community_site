@@ -10,8 +10,8 @@ class Event < ApplicationRecord
   validates :location, presence: true
   validate :end_time_after_start_time
 
-  scope :upcoming, -> { where('start_time >= ?', Time.current).order(start_time: :asc) }
-  scope :past, -> { where('end_time < ?', Time.current).order(start_time: :desc) }
+  scope :upcoming, -> { where("start_time >= ?", Time.current).order(start_time: :asc) }
+  scope :past, -> { where("end_time < ?", Time.current).order(start_time: :desc) }
   scope :this_month, -> { where(start_time: Time.current.beginning_of_month..Time.current.end_of_month) }
 
   after_create :track_creation
@@ -34,8 +34,8 @@ class Event < ApplicationRecord
   def track_creation
     event_changes.create!(
       user: user,
-      action: 'created',
-      changes_made: attributes.except('id', 'created_at', 'updated_at').to_json
+      action: "created",
+      changes_made: attributes.except("id", "created_at", "updated_at").to_json
     )
   end
 
@@ -43,8 +43,8 @@ class Event < ApplicationRecord
     if saved_changes.present?
       event_changes.create!(
         user: user,
-        action: 'updated',
-        changes_made: saved_changes.except('updated_at').to_json
+        action: "updated",
+        changes_made: saved_changes.except("updated_at").to_json
       )
     end
   end

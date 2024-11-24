@@ -1,14 +1,14 @@
 Rails.application.routes.draw do
-  root 'home#index'
-  
+  root "home#index"
+
   devise_for :users
-  
+
   resources :chat_rooms do
-    resources :messages, only: [:create]
+    resources :messages, only: [ :create ]
   end
 
   resources :posts do
-    resources :comments, only: [:create, :destroy]
+    resources :comments, only: [ :create, :destroy ]
     member do
       post :publish
       post :unpublish
@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   end
 
   resources :events do
-    resources :comments, only: [:create, :destroy]
+    resources :comments, only: [ :create, :destroy ]
     collection do
       get :calendar
       get :upcoming
@@ -29,14 +29,14 @@ Rails.application.routes.draw do
   end
 
   # Community routes
-  get 'community', to: 'community#index'
-  post 'community/start_chat', to: 'community#start_chat', as: :start_chat_community
+  get "community", to: "community#index"
+  post "community/start_chat", to: "community#start_chat", as: :start_chat_community
 
   # User profile and dashboard routes
-  get 'dashboard', to: 'dashboard#index'
-  get 'profile', to: 'users#profile'
-  get 'settings', to: 'users#settings'
+  get "dashboard", to: "dashboard#index"
+  get "profile", to: "users#profile"
+  get "settings", to: "users#settings"
 
   # Mount Action Cable
-  mount ActionCable.server => '/cable'
+  mount ActionCable.server => "/cable"
 end

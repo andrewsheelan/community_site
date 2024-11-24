@@ -20,12 +20,12 @@ class User < ApplicationRecord
 
   def start_conversation_with(other_user)
     return nil if self == other_user
-    
-    ChatRoom.create_private_room([self, other_user])
+
+    ChatRoom.create_private_room([ self, other_user ])
   end
 
   def display_name
-    name.presence || email.split('@').first
+    name.presence || email.split("@").first
   end
 
   # Role methods
@@ -64,7 +64,7 @@ class User < ApplicationRecord
   private
 
   def set_default_name
-    self.name ||= email.split('@').first if email
+    self.name ||= email.split("@").first if email
   end
 
   def assign_default_role

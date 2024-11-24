@@ -1,6 +1,6 @@
 # Clear existing data
 puts "Clearing existing data..."
-[User, Post, Event, ChatRoom, Message, Comment].each(&:delete_all)
+[ User, Post, Event, ChatRoom, Message, Comment ].each(&:delete_all)
 
 # Create admin user
 puts "Creating admin user..."

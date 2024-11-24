@@ -11,7 +11,7 @@ class Post < ApplicationRecord
   scope :with_user, -> { includes(:user) }
 
   def author_name
-    user.email.split('@').first
+    user.email.split("@").first
   end
 
   def reading_time

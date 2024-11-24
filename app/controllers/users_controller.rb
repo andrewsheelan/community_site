@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_user, only: [:show, :edit, :update]
+  before_action :set_user, only: [ :show, :edit, :update ]
   load_and_authorize_resource
 
   def index
@@ -21,7 +21,7 @@ class UsersController < ApplicationController
     end
 
     if @user.update(user_params.except(:role_ids))
-      redirect_to @user, notice: 'User was successfully updated.'
+      redirect_to @user, notice: "User was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -40,7 +40,7 @@ class UsersController < ApplicationController
   def update_roles
     # Remove all existing roles
     @user.roles.clear
-    
+
     # Add selected roles
     role_ids = user_params[:role_ids].reject(&:blank?).map(&:to_i)
     role_ids.each do |role_id|

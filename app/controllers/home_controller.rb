@@ -4,12 +4,12 @@ class HomeController < ApplicationController
     if user_signed_in?
       @recent_conversations = current_user.joined_chat_rooms
         .includes(:users, messages: :user)
-        .order('messages.created_at DESC')
+        .order("messages.created_at DESC")
         .distinct
         .limit(5)
 
       @upcoming_events = Event.where(
-        'start_time BETWEEN ? AND ?',
+        "start_time BETWEEN ? AND ?",
         Date.current.beginning_of_month,
         Date.current.end_of_month.end_of_day
       )

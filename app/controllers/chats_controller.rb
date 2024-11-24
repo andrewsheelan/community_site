@@ -8,16 +8,16 @@ class ChatsController < ApplicationController
 
   def create
     @message = current_user.messages.build(message_params)
-    
+
     if @message.save
       # Simulate AI response
       ai_response = Message.create!(
         content: generate_ai_response(@message.content),
-        user: User.find_by(email: 'ai.assistant@example.com'),
+        user: User.find_by(email: "ai.assistant@example.com"),
         ai_response: true
       )
-      
-      redirect_to chat_path, notice: 'Message sent!'
+
+      redirect_to chat_path, notice: "Message sent!"
     else
       @messages = Message.in_order.includes(:user)
       render :show
@@ -38,10 +38,10 @@ class ChatsController < ApplicationController
       "Based on what you're saying, I would suggest...",
       "Let me share my thoughts on that..."
     ]
-    
+
     # Add some delay to simulate thinking
     sleep(1)
-    
+
     "#{responses.sample} #{user_message.reverse}"
   end
 end

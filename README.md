@@ -6,9 +6,7 @@ A beautiful, vintage-themed community platform built with Ruby on Rails. This ap
 ![alt text](image.png)
 ![alt text](image-1.png)
 ![alt text](image-2.png)
-![
-  
-](image-3.png)
+![alt text](image-3.png)
 ### User Management
 - Authentication with Devise
 - Role-based authorization (Admin, Member)

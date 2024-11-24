@@ -10,10 +10,10 @@ class CommentsController < ApplicationController
     if @comment.save
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to @commentable, notice: 'Comment was successfully added.' }
+        format.html { redirect_to @commentable, notice: "Comment was successfully added." }
       end
     else
-      redirect_to @commentable, alert: 'Error adding comment.'
+      redirect_to @commentable, alert: "Error adding comment."
     end
   end
 
@@ -23,7 +23,7 @@ class CommentsController < ApplicationController
 
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to @commentable, notice: 'Comment was successfully removed.' }
+      format.html { redirect_to @commentable, notice: "Comment was successfully removed." }
     end
   end
 

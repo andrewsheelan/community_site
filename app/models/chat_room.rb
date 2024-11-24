@@ -36,8 +36,8 @@ class ChatRoom < ApplicationRecord
     private_rooms
       .joins(:chat_room_members)
       .where(chat_room_members: { user_id: users.map(&:id) })
-      .group('chat_rooms.id')
-      .having('COUNT(chat_room_members.id) = 2')
+      .group("chat_rooms.id")
+      .having("COUNT(chat_room_members.id) = 2")
       .first
   end
 

@@ -1,6 +1,6 @@
 class ChatRoomsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_chat_room, only: [:show]
+  before_action :set_chat_room, only: [ :show ]
 
   def index
     @chat_rooms = ChatRoom.public_rooms
@@ -27,7 +27,7 @@ class ChatRoomsController < ApplicationController
     else
       @chat_room = ChatRoom.new(chat_room_params)
       @chat_room.private = false
-      
+
       if @chat_room.save
         @chat_room.chat_room_members.create(user: current_user)
       end
