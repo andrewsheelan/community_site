@@ -1,0 +1,45 @@
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-serif font-bold text-amber-900">Edit Event</h1>
+  </div>
+
+  <div class="paper-texture bg-amber-100/50 rounded-lg p-6 shadow-sm">
+    <%= render 'form', event: @event %>
+  </div>
+
+  <% if @event.event_changes.any? %>
+    <div class="mt-8">
+      <h2 class="text-xl font-serif font-semibold text-amber-900 mb-4">Event History</h2>
+      
+      <div class="paper-texture bg-amber-100/50 rounded-lg p-6 shadow-sm space-y-4">
+        <% @event.event_changes.includes(:user).order(created_at: :desc).each do |change| %>
+          <div class="border-l-4 border-amber-500 pl-4">
+            <p class="text-sm text-amber-900">
+              <span class="font-medium"><%= change.user.display_name %></span>
+              <%= change.action %> this event
+              <span class="text-amber-600">
+                <%= time_ago_in_words(change.created_at) %> ago
+              </span>
+            </p>
+            
+            <% if change.changes_made.present? %>
+              <div class="mt-2 text-sm text-amber-700">
+                <% JSON.parse(change.changes_made).each do |field, values| %>
+                  <% if change.action == 'created' %>
+                    <p><strong><%= field.humanize %>:</strong> <%= values %></p>
+                  <% else %>
+                    <p>
+                      <strong><%= field.humanize %></strong> changed from
+                      "<%= values[0] || 'empty' %>" to
+                      "<%= values[1] %>"
+                    </p>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

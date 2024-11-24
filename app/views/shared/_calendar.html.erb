@@ -1,0 +1,79 @@
+<%
+  # Get start and end of month
+  start_date = Date.current.beginning_of_month
+  end_date = Date.current.end_of_month
+  
+  # Get all dates that have events
+  event_dates = events.map { |e| e.start_time.to_date }.uniq
+%>
+
+<div class="paper-texture bg-amber-100/50 rounded-lg p-4 shadow-sm">
+  <div class="text-center mb-4">
+    <h3 class="text-lg font-semibold text-amber-900">
+      <%= Date.current.strftime("%B %Y") %>
+    </h3>
+  </div>
+
+  <div class="grid grid-cols-7 gap-1">
+    <% %w(Sun Mon Tue Wed Thu Fri Sat).each do |day| %>
+      <div class="text-center text-sm font-medium text-amber-700">
+        <%= day %>
+      </div>
+    <% end %>
+
+    <% # Fill in empty days at start of month %>
+    <% start_date.wday.times do %>
+      <div class="h-10 text-center text-sm text-amber-400"></div>
+    <% end %>
+
+    <% # Fill in days of month %>
+    <% (start_date..end_date).each do |date| %>
+      <% 
+        has_event = event_dates.include?(date)
+        is_today = date == Date.current
+      %>
+      <div class="relative h-10">
+        <%= link_to events_path(date: date), class: "block w-full h-full" do %>
+          <div class="absolute inset-1">
+            <div class="
+              w-full h-full flex items-center justify-center rounded
+              text-sm
+              <%= has_event ? 'bg-amber-500 text-white hover:bg-amber-600' : 'hover:bg-amber-200/50' %>
+              <%= is_today ? 'ring-2 ring-amber-500' : '' %>
+              transition-colors
+            ">
+              <%= date.day %>
+              <% if has_event %>
+                <div class="absolute bottom-1 left-1/2 transform -translate-x-1/2">
+                  <div class="w-1 h-1 rounded-full bg-white"></div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% # Fill in empty days at end of month %>
+    <% (42 - (end_date.day + start_date.wday)).times do %>
+      <div class="h-10 text-center text-sm text-amber-400"></div>
+    <% end %>
+  </div>
+
+  <% if event_dates.any? %>
+    <div class="mt-4 space-y-2">
+      <h4 class="font-medium text-amber-900">Upcoming Events</h4>
+      <% events.where('start_time >= ?', Date.current).order(start_time: :asc).limit(3).each do |event| %>
+        <div class="flex items-center space-x-2 text-sm">
+          <div class="w-2 h-2 rounded-full bg-amber-500"></div>
+          <div>
+            <%= link_to event.title, event_path(event), class: "text-amber-700 hover:text-amber-800" %>
+            <span class="text-amber-600">
+              (<%= event.start_time.strftime("%b %d, %I:%M %p") %>)
+            </span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,28 @@
+<div class="flex <%= message.user == current_user ? 'justify-end' : 'justify-start' %> items-start space-x-2">
+  <% unless message.user == current_user %>
+    <div class="flex-grow-0">
+      <div class="w-8 h-8 rounded-full bg-amber-200 flex items-center justify-center">
+        <span class="text-amber-800 font-semibold"><%= message.user.email[0].upcase %></span>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="flex flex-col <%= message.user == current_user ? 'items-end' : 'items-start' %> space-y-1 max-w-[70%]">
+    <div class="<%= message.user == current_user ? 'bg-amber-600 text-white' : 'bg-amber-100 text-amber-900' %> rounded-lg px-4 py-2 shadow-sm">
+      <%= message.content %>
+    </div>
+    <div class="flex items-center space-x-2 text-xs text-amber-600">
+      <span><%= message.user.email %></span>
+      <span>•</span>
+      <span><%= time_ago_in_words(message.created_at) %> ago</span>
+    </div>
+  </div>
+
+  <% if message.user == current_user %>
+    <div class="flex-grow-0">
+      <div class="w-8 h-8 rounded-full bg-amber-200 flex items-center justify-center">
+        <span class="text-amber-800 font-semibold"><%= message.user.email[0].upcase %></span>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,53 +1,107 @@
-<div class="min-h-screen bg-amber-50">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="paper-texture bg-amber-50/90 rounded-lg shadow-lg border border-amber-200/50 p-8 transform rotate-[-0.5deg]">
-      <div class="transform rotate-[0.5deg]">
-        <h1 class="text-4xl font-bold text-amber-900 text-center font-serif mb-8">Welcome to Our Community</h1>
-        
-        <% if user_signed_in? %>
-          <div class="mb-8 text-center">
-            <p class="text-amber-800 mb-4">Welcome back, <span class="font-semibold"><%= current_user.email %></span>!</p>
-            <div class="space-x-4">
-              <%= link_to "Chat with AI", chat_path,
-                  class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors" %>
-              <%= button_to "Sign Out", destroy_user_session_path, method: :delete, 
-                  class: "inline-flex items-center px-4 py-2 border border-amber-600 rounded-md shadow-sm text-sm font-medium text-amber-700 bg-transparent hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors" %>
-            </div>
-          </div>
-        <% else %>
-          <div class="flex justify-center space-x-4 mb-8">
-            <%= link_to "Sign In", new_user_session_path, 
-                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors" %>
-            <%= link_to "Sign Up", new_user_registration_path, 
-                class: "inline-flex items-center px-4 py-2 border border-amber-600 rounded-md shadow-sm text-sm font-medium text-amber-700 bg-transparent hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors" %>
-          </div>
-        <% end %>
-
-        <div class="bg-amber-100/50 rounded-lg p-6 mb-8">
-          <h2 class="text-2xl font-serif font-bold text-amber-900 mb-4">Our Community Members</h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <% @users.each do |user| %>
-              <div class="bg-white/50 rounded-lg p-4 shadow-sm border border-amber-200">
-                <div class="flex items-center space-x-3">
-                  <div class="flex-shrink-0">
-                    <div class="w-10 h-10 rounded-full bg-amber-200 flex items-center justify-center">
-                      <span class="text-amber-800 font-semibold"><%= user.email[0].upcase %></span>
-                    </div>
-                  </div>
-                  <div class="flex-1">
-                    <p class="text-sm font-medium text-amber-900"><%= user.email %></p>
-                    <p class="text-xs text-amber-600">Member since <%= user.created_at.strftime("%B %Y") %></p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <% if user_signed_in? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Recent Conversations -->
+      <div class="space-y-4">
+        <h2 class="text-2xl font-serif font-bold text-amber-900">Recent Conversations</h2>
+        <div class="space-y-4">
+          <% if @recent_conversations.any? %>
+            <% @recent_conversations.each do |chat_room| %>
+              <div class="paper-texture bg-amber-100/50 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-start justify-between">
+                  <div>
+                    <h3 class="font-semibold text-amber-900">
+                      <% if chat_room.private? %>
+                        <%= link_to chat_room_path(chat_room), class: "hover:text-amber-700" do %>
+                          Chat with <%= chat_room.users.where.not(id: current_user.id).first&.display_name %>
+                        <% end %>
+                      <% else %>
+                        <%= link_to chat_room.name, chat_room_path(chat_room), class: "hover:text-amber-700" %>
+                      <% end %>
+                    </h3>
+                    <% if chat_room.messages.any? %>
+                      <p class="text-sm text-amber-600 mt-1">
+                        <%= chat_room.messages.last.user.display_name %>: 
+                        <%= truncate(chat_room.messages.last.content, length: 50) %>
+                      </p>
+                      <p class="text-xs text-amber-500 mt-1">
+                        <%= time_ago_in_words(chat_room.messages.last.created_at) %> ago
+                      </p>
+                    <% end %>
                   </div>
                 </div>
               </div>
             <% end %>
-          </div>
+          <% else %>
+            <div class="paper-texture bg-amber-100/50 rounded-lg p-4 shadow-sm">
+              <p class="text-amber-700">No conversations yet. Start chatting with someone from the community!</p>
+            </div>
+          <% end %>
         </div>
+      </div>
 
-        <div class="text-center text-amber-700 text-sm">
-          <p>&copy; <%= Time.current.year %> Our Community. All rights reserved.</p>
+      <!-- Upcoming Events -->
+      <div class="space-y-4">
+        <h2 class="text-2xl font-serif font-bold text-amber-900">Upcoming Events</h2>
+        <div class="space-y-4">
+          <% if @upcoming_events.any? %>
+            <% @upcoming_events.each do |event| %>
+              <div class="paper-texture bg-amber-100/50 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+                <h3 class="font-semibold text-amber-900">
+                  <%= link_to event.title, event_path(event), class: "hover:text-amber-700" %>
+                </h3>
+                <p class="text-sm text-amber-600 mt-1">
+                  <%= event.start_time.strftime("%B %d, %I:%M %p") %>
+                </p>
+                <p class="text-sm text-amber-600">
+                  <%= event.location %>
+                </p>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="paper-texture bg-amber-100/50 rounded-lg p-4 shadow-sm">
+              <p class="text-amber-700">No upcoming events. Stay tuned!</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Recent Posts -->
+      <div class="space-y-4">
+        <h2 class="text-2xl font-serif font-bold text-amber-900">Recent Posts</h2>
+        <div class="space-y-4">
+          <% if @recent_posts.any? %>
+            <% @recent_posts.each do |post| %>
+              <div class="paper-texture bg-amber-100/50 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+                <h3 class="font-semibold text-amber-900">
+                  <%= link_to post.title, post_path(post), class: "hover:text-amber-700" %>
+                </h3>
+                <p class="text-sm text-amber-600 mt-1">
+                  by <%= post.user.display_name %>
+                </p>
+                <p class="text-xs text-amber-500 mt-1">
+                  <%= time_ago_in_words(post.created_at) %> ago
+                </p>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="paper-texture bg-amber-100/50 rounded-lg p-4 shadow-sm">
+              <p class="text-amber-700">No posts yet. Be the first to share something!</p>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>
-  </div>
+  <% else %>
+    <div class="text-center py-12">
+      <h1 class="text-4xl font-serif font-bold text-amber-900 mb-4">Welcome to Our Community</h1>
+      <p class="text-lg text-amber-700 mb-8">Join our vibrant community to connect, share, and grow together.</p>
+      <div class="space-x-4">
+        <%= link_to "Sign Up", new_user_registration_path, 
+            class: "inline-flex items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500" %>
+        <%= link_to "Sign In", new_user_session_path, 
+            class: "inline-flex items-center px-6 py-3 border border-amber-600 rounded-md shadow-sm text-base font-medium text-amber-700 bg-transparent hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500" %>
+      </div>
+    </div>
+  <% end %>
 </div>

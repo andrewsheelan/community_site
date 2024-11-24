@@ -1,0 +1,31 @@
+<div id="<%= dom_id(comment) %>" class="paper-texture bg-amber-100/50 rounded-lg p-4 shadow-sm">
+  <div class="flex justify-between items-start">
+    <div class="flex items-center space-x-3">
+      <div class="w-8 h-8 rounded-full bg-amber-200 flex items-center justify-center">
+        <span class="text-amber-800 font-semibold text-sm">
+          <%= comment.user.name[0].upcase %>
+        </span>
+      </div>
+      <div>
+        <div class="text-sm">
+          <span class="font-medium text-amber-900"><%= comment.user.name %></span>
+          <span class="text-amber-600 ml-2"><%= comment.friendly_created_at %></span>
+        </div>
+        <div class="mt-1 text-amber-800">
+          <%= comment.content %>
+        </div>
+      </div>
+    </div>
+
+    <% if can?(:destroy, comment) %>
+      <%= button_to polymorphic_path([comment.commentable, comment]), 
+          method: :delete,
+          class: "text-amber-600 hover:text-amber-700",
+          form: { data: { turbo_confirm: "Are you sure you want to remove this comment?" } } do %>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      <% end %>
+    <% end %>
+  </div>
+</div>

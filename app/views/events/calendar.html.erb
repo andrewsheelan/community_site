@@ -1,0 +1,87 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="paper-texture bg-amber-50/90 rounded-lg shadow-md p-8">
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-3xl font-serif font-bold text-amber-900">Event Calendar</h1>
+      
+      <div class="flex space-x-4">
+        <%= link_to calendar_events_path(date: @selected_date.prev_month), 
+            class: "inline-flex items-center px-3 py-2 border border-amber-600 rounded-md shadow-sm text-sm font-medium text-amber-700 bg-transparent hover:bg-amber-50" do %>
+          <svg class="h-5 w-5 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Previous Month
+        <% end %>
+
+        <%= link_to calendar_events_path(date: @selected_date.next_month),
+            class: "inline-flex items-center px-3 py-2 border border-amber-600 rounded-md shadow-sm text-sm font-medium text-amber-700 bg-transparent hover:bg-amber-50" do %>
+          Next Month
+          <svg class="h-5 w-5 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="text-center mb-8">
+      <h2 class="text-2xl font-serif font-semibold text-amber-900">
+        <%= @selected_date.strftime("%B %Y") %>
+      </h2>
+    </div>
+
+    <div class="paper-texture bg-amber-100/50 rounded-lg p-6">
+      <!-- Calendar Grid -->
+      <div class="grid grid-cols-7 gap-px bg-amber-200">
+        <!-- Day Headers -->
+        <% %w[Sun Mon Tue Wed Thu Fri Sat].each do |day| %>
+          <div class="bg-amber-100 p-2 text-center text-amber-900 font-medium">
+            <%= day %>
+          </div>
+        <% end %>
+
+        <!-- Calendar Days -->
+        <% @calendar_data.each do |week| %>
+          <% week.each do |day| %>
+            <div class="min-h-[120px] p-2 <%= day[:current_month] ? 'bg-white' : 'bg-amber-50' %> relative group">
+              <div class="text-right">
+                <span class="<%= day[:current_month] ? 'text-amber-900' : 'text-amber-400' %> <%= day[:date] == Date.current ? 'font-bold' : '' %>">
+                  <%= day[:date].day %>
+                </span>
+              </div>
+
+              <div class="space-y-1 mt-1">
+                <% day[:events].each do |event| %>
+                  <%= link_to event_path(event), 
+                      class: "block text-xs p-1 rounded bg-amber-100 hover:bg-amber-200 text-amber-900 truncate" do %>
+                    <%= event.start_time.strftime("%I:%M %p") %> - <%= event.title %>
+                  <% end %>
+                <% end %>
+              </div>
+
+              <% if can?(:create, Event) %>
+                <%= link_to new_event_path(date: day[:date]),
+                    class: "hidden group-hover:flex absolute bottom-1 right-1 p-1 text-amber-600 hover:text-amber-700",
+                    title: "Add event" do %>
+                  <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <% if can?(:create, Event) %>
+      <div class="mt-8 text-center">
+        <%= link_to new_event_path, 
+            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700" do %>
+          <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Create New Event
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,69 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-serif font-bold text-amber-900">Community Events</h1>
+    <%= link_to "Create Event", new_event_path, 
+      class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500" %>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Calendar Section -->
+    <div class="lg:col-span-2">
+      <%= render 'shared/calendar', events: @events %>
+    </div>
+
+    <!-- Events List Section -->
+    <div class="space-y-6">
+      <% if params[:date] %>
+        <div class="paper-texture bg-amber-100/50 rounded-lg p-4 shadow-sm">
+          <h2 class="text-xl font-serif font-semibold text-amber-900 mb-4">
+            Events on <%= @selected_date.strftime("%B %d, %Y") %>
+          </h2>
+          
+          <% if @date_events.any? %>
+            <div class="space-y-4">
+              <% @date_events.each do |event| %>
+                <div class="border-l-4 border-amber-500 pl-4">
+                  <h3 class="font-medium text-amber-900"><%= event.title %></h3>
+                  <p class="text-sm text-amber-700">
+                    <%= event.start_time.strftime("%I:%M %p") %>
+                    <% if event.end_time %>
+                      - <%= event.end_time.strftime("%I:%M %p") %>
+                    <% end %>
+                  </p>
+                  <% if event.description.present? %>
+                    <p class="text-sm text-amber-600 mt-1">
+                      <%= truncate(event.description, length: 100) %>
+                    </p>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-amber-700">No events scheduled for this day.</p>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="paper-texture bg-amber-100/50 rounded-lg p-4 shadow-sm">
+        <h2 class="text-xl font-serif font-semibold text-amber-900 mb-4">
+          Upcoming Events
+        </h2>
+        
+        <% if @events.any? %>
+          <div class="space-y-4">
+            <% @events.where('start_time >= ?', Date.current).limit(5).each do |event| %>
+              <div class="border-l-4 border-amber-500 pl-4">
+                <h3 class="font-medium text-amber-900"><%= event.title %></h3>
+                <p class="text-sm text-amber-700">
+                  <%= event.start_time.strftime("%B %d, %I:%M %p") %>
+                </p>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-amber-700">No upcoming events this month.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,34 @@
+<%= form_with(model: post, class: "space-y-6") do |f| %>
+  <% if post.errors.any? %>
+    <div class="paper-texture bg-red-50 border-l-4 border-red-400 p-4 rounded">
+      <h2 class="text-red-800 font-medium mb-2">
+        <%= pluralize(post.errors.count, "error") %> prevented this post from being saved:
+      </h2>
+      <ul class="list-disc list-inside text-red-700">
+        <% post.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :title, class: "block text-sm font-medium text-amber-700" %>
+    <%= f.text_field :title, class: "mt-1 block w-full rounded-md border-amber-300 shadow-sm focus:border-amber-500 focus:ring-amber-500" %>
+  </div>
+
+  <div>
+    <%= f.label :content, class: "block text-sm font-medium text-amber-700" %>
+    <%= f.rich_text_area :content, class: "mt-1 block w-full rounded-md border-amber-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 min-h-[200px]" %>
+  </div>
+
+  <div class="flex items-center">
+    <%= f.check_box :published, class: "h-4 w-4 rounded border-amber-300 text-amber-600 focus:ring-amber-500" %>
+    <%= f.label :published, "Publish this post", class: "ml-2 block text-sm text-amber-700" %>
+  </div>
+
+  <div class="flex justify-end space-x-4">
+    <%= link_to "Cancel", posts_path, class: "px-4 py-2 border border-amber-300 text-amber-700 rounded-md hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500" %>
+    <%= f.submit class: "px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500" %>
+  </div>
+<% end %>

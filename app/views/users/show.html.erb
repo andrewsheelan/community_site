@@ -1,0 +1,113 @@
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="flex justify-between items-start mb-8">
+    <div>
+      <h1 class="text-3xl font-serif font-bold text-amber-900"><%= @user.display_name %></h1>
+      <div class="mt-2 flex flex-wrap gap-2">
+        <% @user.roles.each do |role| %>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+            <%= role.name == Role::ADMIN ? 'bg-red-100 text-red-800' :
+                role.name == Role::MODERATOR ? 'bg-purple-100 text-purple-800' :
+                'bg-amber-100 text-amber-800' %>">
+            <%= role.name.titleize %>
+          </span>
+        <% end %>
+      </div>
+    </div>
+
+    <% if can? :manage, @user %>
+      <div class="flex space-x-4">
+        <%= link_to edit_user_path(@user), class: "inline-flex items-center px-4 py-2 border border-amber-600 rounded-md shadow-sm text-sm font-medium text-amber-700 bg-transparent hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500" do %>
+          <svg class="h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+          Edit Profile
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="md:col-span-2 space-y-8">
+      <!-- User's Events -->
+      <div>
+        <h2 class="text-xl font-serif font-semibold text-amber-900 mb-4">Events Created</h2>
+        <div class="space-y-4">
+          <% @user.events.order(start_time: :desc).each do |event| %>
+            <div class="paper-texture bg-amber-100/50 rounded-lg p-4 shadow-sm">
+              <h3 class="font-medium text-amber-900">
+                <%= link_to event.title, event_path(event), class: "hover:text-amber-700" %>
+              </h3>
+              <p class="text-sm text-amber-700 mt-1">
+                <%= event.start_time.strftime("%B %d, %Y at %I:%M %p") %>
+              </p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- User's Posts -->
+      <div>
+        <h2 class="text-xl font-serif font-semibold text-amber-900 mb-4">Recent Posts</h2>
+        <div class="space-y-4">
+          <% @user.posts.order(created_at: :desc).each do |post| %>
+            <div class="paper-texture bg-amber-100/50 rounded-lg p-4 shadow-sm">
+              <h3 class="font-medium text-amber-900">
+                <%= link_to post.title, post_path(post), class: "hover:text-amber-700" %>
+              </h3>
+              <p class="text-sm text-amber-700 mt-1">
+                <%= time_ago_in_words(post.created_at) %> ago
+              </p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+      <!-- User Info -->
+      <div class="paper-texture bg-amber-100/50 rounded-lg p-6 shadow-sm">
+        <h2 class="text-lg font-medium text-amber-900 mb-4">User Information</h2>
+        <div class="space-y-3">
+          <div>
+            <h3 class="text-sm font-medium text-amber-900">Email</h3>
+            <p class="text-amber-800"><%= @user.email %></p>
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-amber-900">Member Since</h3>
+            <p class="text-amber-800"><%= @user.created_at.strftime("%B %d, %Y") %></p>
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-amber-900">Role</h3>
+            <p class="text-amber-800"><%= @user.highest_role.titleize %></p>
+          </div>
+        </div>
+      </div>
+
+      <% if can? :manage, User %>
+        <!-- Role Management -->
+        <div class="paper-texture bg-amber-100/50 rounded-lg p-6 shadow-sm">
+          <h2 class="text-lg font-medium text-amber-900 mb-4">Manage Roles</h2>
+          <%= form_with(model: @user, local: true, class: "space-y-4") do |f| %>
+            <% Role.all.each do |role| %>
+              <div class="flex items-center">
+                <input type="checkbox" 
+                       id="role_<%= role.id %>" 
+                       name="user[role_ids][]" 
+                       value="<%= role.id %>"
+                       <%= 'checked' if @user.has_role?(role.name) %>
+                       class="h-4 w-4 text-amber-600 focus:ring-amber-500 border-amber-300 rounded">
+                <label for="role_<%= role.id %>" class="ml-2 block text-sm text-amber-900">
+                  <%= role.name.titleize %>
+                </label>
+              </div>
+            <% end %>
+            
+            <%= f.submit "Update Roles", 
+              class: "w-full mt-4 inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,5 @@
+<%= turbo_stream.remove @comment %>
+
+<%= turbo_stream.update "comment_count" do %>
+  <%= pluralize(@commentable.comments.count, "comment") %>
+<% end %>

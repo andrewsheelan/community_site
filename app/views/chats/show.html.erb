@@ -45,7 +45,7 @@
           <% end %>
         </div>
 
-        <%= form_with(model: @message, url: messages_path, local: true, class: "space-y-4") do |f| %>
+        <%= form_with(model: @message, url: chat_room_messages_path(@chat_room), local: true, class: "space-y-4") do |f| %>
           <div class="flex space-x-4">
             <%= f.text_area :content, 
                 class: "flex-grow px-4 py-2 bg-amber-50/50 border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-sm resize-none",

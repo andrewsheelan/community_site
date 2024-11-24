@@ -1,0 +1,7 @@
+<%= turbo_stream.prepend "comments" do %>
+  <%= render "comments/comment", comment: @comment %>
+<% end %>
+
+<%= turbo_stream.update "comment_count" do %>
+  <%= pluralize(@commentable.comments.count, "comment") %>
+<% end %>

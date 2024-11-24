@@ -1,0 +1,58 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="paper-texture bg-amber-50/90 rounded-lg shadow-md p-8">
+    <h1 class="text-3xl font-bold text-amber-900 mb-8">Community Members</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @users.each do |user| %>
+        <div class="paper-texture bg-amber-100/50 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between">
+            <div class="flex items-center space-x-4">
+              <div class="w-12 h-12 rounded-full bg-amber-200 flex items-center justify-center">
+                <span class="text-amber-800 font-semibold text-lg">
+                  <%= (user.name || ' ')[0].upcase %>
+                </span>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-amber-900"><%= user.name %></h3>
+                <p class="text-sm text-amber-600">Member since <%= user.created_at.strftime("%B %Y") %></p>
+              </div>
+            </div>
+
+            <%= button_to start_chat_community_path(user_id: user.id),
+                class: "text-amber-600 hover:text-amber-700 focus:outline-none",
+                title: "Start chat with #{user.name}",
+                data: { turbo_frame: "_top" } do %>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+            <% end %>
+          </div>
+
+          <div class="mt-4">
+            <% if user.posts.any? %>
+              <div class="text-sm text-amber-700">
+                <span class="font-medium"><%= user.posts.count %></span> posts
+              </div>
+            <% end %>
+            
+            <% latest_post = user.posts.published.recent.first %>
+            <% if latest_post %>
+              <div class="mt-2 text-sm">
+                <span class="text-amber-600">Latest post:</span>
+                <%= link_to latest_post.title, post_path(latest_post), 
+                    class: "text-amber-700 hover:text-amber-800" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <% if @users.empty? %>
+      <div class="text-center py-12">
+        <p class="text-lg text-amber-700">No other community members yet.</p>
+        <p class="text-amber-600 mt-2">Invite your friends to join!</p>
+      </div>
+    <% end %>
+  </div>
+</div>

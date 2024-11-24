@@ -1,4 +1,4 @@
-<% if user_signed_in? %>
+<% if user_signed_in? && @chat_room %>
   <div class="fixed bottom-0 right-4 w-96 z-50" data-controller="chat">
     <!-- Chat Header -->
     <button class="paper-texture w-full bg-amber-50/90 px-4 py-3 border border-amber-200/50 rounded-t-lg shadow-lg flex items-center justify-between cursor-pointer"
@@ -59,7 +59,7 @@
         </div>
 
         <!-- Message Input -->
-        <%= form_with(model: Message.new, url: messages_path, local: true, class: "border-t border-amber-200/50 p-4",
+        <%= form_with(model: Message.new, url: chat_room_messages_path(@chat_room), local: true, class: "border-t border-amber-200/50 p-4",
                     data: { action: "submit->chat#submitMessage" }) do |f| %>
           <div class="flex space-x-2">
             <%= f.text_area :content, 
